@@ -8,37 +8,35 @@
     justify-content: center;
 }
 
-.container ul {
+ul {
     padding-left: 0px;
     font-family: sans-serif;
 }
-.container ul li {
+li {
     width: 350px;
     list-style: none;
 }
-.container ul li .list-item {
+.list-item {
     display: flex;
     column-gap: 10px;
     flex: 2 1 auto;
     color: #8590B6;
     font-weight: 400;
+    height: 50px;
     padding-left: 20px;
     padding-right: 20px;
     align-items: center ;
 }
-.container ul li .list-item p {
+.task-title {
     width: 80%;
     font-size: 16px;
+    padding: 10px;
     overflow: auto;
 }
-.container ul li .list-item svg {
+svg {
     cursor: pointer;
-    display: none;
 }
-.container ul li .list-item:hover svg {
-    display: block;
-}
-.container ul li .list-item:hover {
+.list-item:hover {
     transform: scale(1.1);
     background-color: #AF7EEB;
     transition: transform 0.3s;
@@ -46,7 +44,7 @@
     box-shadow: 0px 0px 10px 2px #AF7EEB;
     border-radius: 7px;
 }
-.container ul li .list-item .status {
+.status {
     width: 8px;
     height:8px;
     margin-right: 10px;
@@ -54,10 +52,7 @@
     border: 1.5px solid #8590B6;
     background-color: #AF7EEB;
 }
-.container ul li .list-item:hover .status {
-    border: 1.5px solid #8590B6;
-    background-color: white;
-}
+
 /* new task button style */
 .new-task-box {
     position: absolute;
@@ -71,16 +66,14 @@
     border-radius:20px;
     text-align: center;
     display: flex;
+    align-items: center;
     letter-spacing: 0.6px;
     background-color: #AF7EEB;
     box-shadow: 0px 0px 10px 2px #AF7EEB;
 }
 
-.new-task-box p {
+.button-text-p {
     color:white;
     font-size: 17px;    
-}
-
-.new-task-box p:first-child {
     padding-right: 10px;
 }
