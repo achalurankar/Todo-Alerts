@@ -6,9 +6,10 @@
         var value = svg.getElement().innerText;
         value = value.replace("<![CDATA[", "").replace("]]>", "");
         svg.getElement().innerHTML = value;  
-        
-        
-        var ul = component.find("ul");
+        svg = component.find("svg2");
+        value = svg.getElement().innerText;
+        value = value.replace("<![CDATA[", "").replace("]]>", "");
+        svg.getElement().innerHTML = value; 
     }
 
 })
