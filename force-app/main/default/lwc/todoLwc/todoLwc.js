@@ -77,7 +77,7 @@ export default class TodoLwc extends LightningElement {
             })
     }
 
-    getFields(name = "", datetime = "2020-09-12T18:13:41Z") {
+    getFields(name = "", datetime = "") {
         return [
             { label : "Task Name", type : "text", value : name, uniqueName: "name", required : true },
             { label : "Task Date & Time", type : "datetime", value : datetime, uniqueName: "datetime", required : true }
