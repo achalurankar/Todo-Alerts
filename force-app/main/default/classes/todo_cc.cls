@@ -5,13 +5,14 @@ public with sharing class todo_cc {
     
     @AuraEnabled
     public static List<TaskWrapper> getTasks() {
-        List<Todo__c> todos = [SELECT Name, Task_Time__c, Is_Completed__c FROM Todo__c WHERE CreatedById = :UserInfo.getUserId()];
+        List<Todo__c> todos = [SELECT Name, Task_Time__c, Display_Date_Time__c, Is_Completed__c FROM Todo__c WHERE CreatedById = :UserInfo.getUserId()];
         List<TaskWrapper> tasks = new List<TaskWrapper>();
         for(Todo__c todo : todos) {
             TaskWrapper tw = new TaskWrapper();
             tw.id = todo.Id;
             tw.name = todo.Name;
             tw.taskTime = todo.Task_Time__c;
+            tw.displayDateTime = todo.Display_Date_Time__c;
             tw.isCompleted = todo.Is_Completed__c;
             tasks.add(tw);
         }
@@ -52,6 +53,7 @@ public with sharing class todo_cc {
         @AuraEnabled public string id; 
         @AuraEnabled public string name; 
         @AuraEnabled public DateTime taskTime; 
+        @AuraEnabled public string displayDateTime; 
         @AuraEnabled public boolean isCompleted; 
     }
 }
