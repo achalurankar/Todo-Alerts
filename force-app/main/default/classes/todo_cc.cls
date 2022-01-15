@@ -1,10 +1,12 @@
-public with sharing class todo_cc {
+@RestResource(urlMapping='/Todo/*')
+global with sharing class todo_cc {
     public todo_cc() {
 
     }
     
+    @HttpGet
     @AuraEnabled
-    public static List<TaskWrapper> getTasks() {
+    global static string getTasks() {
         List<Todo__c> todos = [SELECT Name, Task_Time__c, Display_Date_Time__c, Is_Completed__c FROM Todo__c WHERE CreatedById = :UserInfo.getUserId()];
         List<TaskWrapper> tasks = new List<TaskWrapper>();
         for(Todo__c todo : todos) {
@@ -16,11 +18,12 @@ public with sharing class todo_cc {
             tw.isCompleted = todo.Is_Completed__c;
             tasks.add(tw);
         }
-        return tasks;
+        return JSON.serialize(tasks);
     }
 
     @AuraEnabled
-    public static string postTask(string requestStructure){
+    @HttpPost
+    global static string postTask(string requestStructure){
         try {
             TaskWrapper wrapper = (TaskWrapper) JSON.deserialize(requestStructure, TaskWrapper.class);
             System.debug('task ' + wrapper);
@@ -33,7 +36,7 @@ public with sharing class todo_cc {
             upsert task;
             return task.Id;
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw e;
         }
     }
 
@@ -45,11 +48,11 @@ public with sharing class todo_cc {
             delete todo;
             return taskId;
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw e;
         }
     }
 
-    public class TaskWrapper {
+    global class TaskWrapper {
         @AuraEnabled public string id; 
         @AuraEnabled public string name; 
         @AuraEnabled public DateTime taskTime; 

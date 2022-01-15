@@ -2,7 +2,6 @@ import { api, LightningElement, track } from 'lwc';
 import postTask from "@salesforce/apex/todo_cc.postTask";
 import deleteTask from "@salesforce/apex/todo_cc.deleteTask";
 import getTasks from "@salesforce/apex/todo_cc.getTasks";
-import { log } from 'c/utils';
 
 export default class TodoLwc extends LightningElement {
 
@@ -12,21 +11,21 @@ export default class TodoLwc extends LightningElement {
     idVsTaskMap;
     selectedBook;
 
-    renderedCallback() {
+    connectedCallback() {
         this.loadTasks();
     }
 
     loadTasks() {
         getTasks()
             .then(res => {
-                this.tasks = res;
+                this.tasks = JSON.parse(res);
                 this.idVsTaskMap = {};
                 res.forEach(element => {
                     this.idVsTaskMap[`${element.id}`] = element;
                 });
             })
             .catch(err => {
-                log(err, true);
+                console.log(JSON.stringify(err));
             });
     }
 
@@ -53,7 +52,7 @@ export default class TodoLwc extends LightningElement {
                 this.loadTasks();
             })
             .catch(err => {
-                log(err, true);
+                console.log(JSON.stringify(err));
             })
     }
 
@@ -63,17 +62,17 @@ export default class TodoLwc extends LightningElement {
 
     handleSave(event) {
         let updatedFields = event.detail.updatedFields;
-        console.log( JSON.stringify(updatedFields) );
         let id = this.selectedBook === undefined ? '' : this.selectedBook.id;
         let name = updatedFields[0].value, taskTime = updatedFields[1].value, isCompleted = false;
         let params = { id : id, name : name, taskTime : taskTime, isCompleted : isCompleted };
+        // console.log(JSON.stringify(params));
         postTask({ requestStructure : JSON.stringify(params) })
             .then(res => {
                 this.loadTasks();
                 this.showModal = false;
             })
             .catch(err => {
-                log(err, true);
+                 console.log(JSON.stringify(err));
             })
     }
 
