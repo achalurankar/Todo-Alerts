@@ -1,6 +1,5 @@
 import { api, LightningElement, track } from 'lwc';
 import postTask from "@salesforce/apex/todo_cc.postTask";
-import deleteTask from "@salesforce/apex/todo_cc.deleteTask";
 import getTasks from "@salesforce/apex/todo_cc.getTasks";
 
 export default class TodoLwc extends LightningElement {
@@ -18,10 +17,11 @@ export default class TodoLwc extends LightningElement {
     loadTasks() {
         getTasks()
             .then(res => {
-                this.tasks = JSON.parse(res);
+                console.log(JSON.stringify(res));
+                this.tasks = res;
                 this.idVsTaskMap = {};
                 res.forEach(element => {
-                    this.idVsTaskMap[`${element.id}`] = element;
+                    this.idVsTaskMap[`${element.Id}`] = element;
                 });
             })
             .catch(err => {
@@ -40,14 +40,15 @@ export default class TodoLwc extends LightningElement {
     handleEditTaskClick(event) {
         let taskId = event.currentTarget.dataset.id;
         this.selectedBook = this.idVsTaskMap[`${taskId}`];
-        this.fields = this.getFields(this.selectedBook.name, this.selectedBook.taskTime);
+        this.fields = this.getFields(this.selectedBook.Name, this.selectedBook.Task_Time__c);
         this.showModal = true;
     }
 
     // delete task button click
     handleDeleteTaskClick(event) {
         let taskId = event.currentTarget.dataset.id;
-        deleteTask({ taskId : taskId })
+        let params = { id : taskId, action : "delete" };
+        postTask({ requestStructure : JSON.stringify(params) })
             .then(res => {
                 this.loadTasks();
             })
@@ -62,9 +63,9 @@ export default class TodoLwc extends LightningElement {
 
     handleSave(event) {
         let updatedFields = event.detail.updatedFields;
-        let id = this.selectedBook === undefined ? '' : this.selectedBook.id;
+        let id = this.selectedBook === undefined ? '' : this.selectedBook.Id;
         let name = updatedFields[0].value, taskTime = updatedFields[1].value, isCompleted = false;
-        let params = { id : id, name : name, taskTime : taskTime, isCompleted : isCompleted };
+        let params = { id : id, name : name, taskTime : taskTime, isCompleted : isCompleted, action : "upsert" };
         // console.log(JSON.stringify(params));
         postTask({ requestStructure : JSON.stringify(params) })
             .then(res => {
@@ -72,7 +73,7 @@ export default class TodoLwc extends LightningElement {
                 this.showModal = false;
             })
             .catch(err => {
-                 console.log(JSON.stringify(err));
+                console.log(JSON.stringify(err));
             })
     }
 
