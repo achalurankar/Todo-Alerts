@@ -14,7 +14,13 @@ global with sharing class TodoAlertScheduler implements Schedulable {
         message.toAddresses = new String[] { 'achalurankar@gmail.com' };
         message.optOutPolicy = 'FILTER';
         message.subject = '\'' + this.todo.Name + '\' reminder';
-        message.htmlbody = 'Your task <b>'+ this.todo.Name +'</b> scheduled at <b>'+ this.todo.Display_Date_Time__c + '</b> is due, make sure to check it out and complete it :)<br>Regards,<br>Todo Alert Bot.';
+        if(this.todo.Description__c != null) 
+            message.htmlbody = 'Your task is due, task details are as follows,<br>Task : <b>'+ this.todo.Name +
+                '</b><br>Due Date : <b>' + this.todo.Display_Date_Time__c + 
+                '</b><br>Description : <b>'+ this.todo.Description__c +
+                '</b><br>Regards,<br>Todo Alert Bot.';
+        else
+            message.htmlbody = 'Your task <b>'+ this.todo.Name +'</b> scheduled at <b>'+ this.todo.Display_Date_Time__c + '</b> is due, make sure to check it out and complete it :)<br>Regards,<br>Todo Alert Bot.';
         Messaging.SingleEmailMessage[] messages =   new List<Messaging.SingleEmailMessage> {message};
         Messaging.SendEmailResult[] results = Messaging.sendEmail(messages);
         
