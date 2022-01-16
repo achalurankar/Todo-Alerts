@@ -24,6 +24,9 @@ global with sharing class todo_cc {
                 delete task;
                 return wrapper.id;
             }
+            if(wrapper.description != null) {
+                task.Description__c = wrapper.description;
+            }
             task.Name = wrapper.name;
             task.Task_Time__c = wrapper.taskTime;
             upsert task;
@@ -37,6 +40,7 @@ global with sharing class todo_cc {
         @AuraEnabled public string id; 
         @AuraEnabled public string name; 
         @AuraEnabled public string action;
+        @AuraEnabled public string description;
         @AuraEnabled public DateTime taskTime; 
         @AuraEnabled public string displayDateTime; 
         @AuraEnabled public boolean isCompleted; 
