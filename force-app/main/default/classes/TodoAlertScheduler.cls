@@ -30,8 +30,10 @@ global with sharing class TodoAlertScheduler implements Schedulable {
             System.debug('The email failed to send: ' + results[0].errors[0].message);
         }
 
-        // abort current job as email is sent
-        Todo__c obj = [SELECT Job_Id__c FROM Todo__c WHERE Custom_Id__c = :todo.Custom_Id__c];
-        System.abortJob(obj.Job_Id__c);
+        // abort one time job as email is sent
+        if(todo.Frequency__c == 'One time') {
+            Todo__c obj = [SELECT Job_Id__c FROM Todo__c WHERE Custom_Id__c = :todo.Custom_Id__c];
+            System.abortJob(obj.Job_Id__c);
+        }
     }
 }
