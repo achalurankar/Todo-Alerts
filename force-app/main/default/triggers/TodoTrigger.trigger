@@ -15,13 +15,15 @@ trigger TodoTrigger on Todo__c (before insert, before update, before delete) {
             }
             // schedule task
             DateTime dt = todo.Task_Time__c;
-            string exp = ''; // seconds minutes our day_of_month month day_of_week year(optional)
+            string exp = ''; // seconds minutes hour day_of_month month day_of_week year(optional)
             if(todo.Frequency__c == 'Weekly')
                 exp = '0 ' + dt.minute() + ' ' + dt.hour() + ' ? JAN-DEC ' + dt.format('E').toUppercase();
             if(todo.Frequency__c == 'Monthly')
             	exp = '0 ' + dt.minute() + ' ' + dt.hour() + ' ' + dt.day() + ' JAN-DEC ? ';
             if(todo.Frequency__c == 'One time')
             	exp = '0 ' + dt.minute() + ' ' + dt.hour() + ' ' + dt.day() + ' ' + dt.month() + ' ? ' + dt.year();
+            if(todo.Frequency__c == 'Daily')
+            	exp = '0 ' + dt.minute() + ' ' + dt.hour() + ' * * ? *';
             System.debug('Cron exp for ' + todo.Frequency__c + ' = ' + exp);
             TodoAlertScheduler sch = new TodoAlertScheduler(todo);
             todo.Job_Id__c = System.schedule('Alert-' + todo.Custom_Id__c, exp, sch);
