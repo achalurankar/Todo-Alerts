@@ -17,10 +17,10 @@ export default class TodoLwc extends LightningElement {
     loadTasks() {
         getTasks()
             .then(res => {
-                this.tasks = res;
+                this.tasks = JSON.parse(res);
                 this.idVsTaskMap = {};
                 res.forEach(element => {
-                    this.idVsTaskMap[`${element.Id}`] = element;
+                    this.idVsTaskMap[`${element.id}`] = element;
                 });
             })
             .catch(err => {
@@ -39,7 +39,7 @@ export default class TodoLwc extends LightningElement {
     handleEditTaskClick(event) {
         let taskId = event.currentTarget.dataset.id;
         this.selectedTask = this.idVsTaskMap[`${taskId}`];
-        this.fields = this.getFields(this.selectedTask.Name, this.selectedTask.Task_Time__c, this.selectedTask.Frequency__c);
+        this.fields = this.getFields(this.selectedTask.name, this.selectedTask.taskTime, this.selectedTask.frequency);
         this.showModal = true;
     }
 
@@ -62,7 +62,7 @@ export default class TodoLwc extends LightningElement {
 
     handleSave(event) {
         let updatedFields = event.detail.updatedFields;
-        let id = this.selectedTask === undefined ? '' : this.selectedTask.Id;
+        let id = this.selectedTask === undefined ? '' : this.selectedTask.id;
         let name = updatedFields.inputs[0].value
         let taskTime = updatedFields.inputs[1].value
         let frequency = updatedFields.comboboxes[0].value
