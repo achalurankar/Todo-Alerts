@@ -8,10 +8,17 @@
             <!-- body -->
             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                 <!-- input fields iteration -->
-                <template for:each={fields} for:item="field">
+                <template for:each={fields.inputs} for:item="field">
                     <div key={field.label} class="slds-form-element">
                         <div class="slds-form-element__control">
                             <lightning-input data-id={field.uniqueName} value={field.value} type={field.type} label={field.label} required={field.required} placeholder="type here..."></lightning-input>
+                        </div>
+                    </div>
+                </template>
+                <template for:each={fields.comboboxes} for:item="field">
+                    <div key={field.label} class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <lightning-combobox name={field.uniqueName} value={field.value} options={field.options} onchange={handleChange} label={field.label} required={field.required}></lightning-combobox>
                         </div>
                     </div>
                 </template>

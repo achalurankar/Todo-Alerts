@@ -17,13 +17,30 @@ export default class Modal extends LightningElement {
 
     //retrieve edited fields using data-id uniqueName attribute and fire event to parent component
     handleSaveClick(){
-        let updatedFields = [];
-        this.fields.forEach(element => {
+        let updatedFields = { inputs : [], comboboxes : [] };
+        this.fields.inputs.forEach(element => {
             let val = this.template.querySelector(`[data-id="${element.uniqueName}"]`).value;
             let temp = Object.assign({}, element);
             temp.value = val;
-            updatedFields.push(temp);
+            updatedFields.inputs.push(temp);
         });
+
+        updatedFields.comboboxes =  this.fields.comboboxes;
         dispatchEvent(this, 'save', { updatedFields : updatedFields });
+    }
+
+    handleChange(event) {
+        let tempComboBoxes = []
+        this.fields.comboboxes.forEach(combobox => {
+            let temp = Object.assign({}, combobox);
+            if(temp.uniqueName === event.target.name) {
+                temp.value = event.detail.value
+            }
+            tempComboBoxes.push(temp);
+        })
+        
+        let tempFields = Object.assign({}, this.fields);
+        tempFields.comboboxes = tempComboBoxes
+        this.fields = tempFields;
     }
 }

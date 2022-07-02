@@ -8,7 +8,7 @@ export default class TodoLwc extends LightningElement {
     @track showModal = false;
     @track fields;
     idVsTaskMap;
-    selectedBook;
+    selectedTask;
 
     connectedCallback() {
         this.loadTasks();
@@ -17,7 +17,6 @@ export default class TodoLwc extends LightningElement {
     loadTasks() {
         getTasks()
             .then(res => {
-                console.log(JSON.stringify(res));
                 this.tasks = res;
                 this.idVsTaskMap = {};
                 res.forEach(element => {
@@ -32,15 +31,15 @@ export default class TodoLwc extends LightningElement {
     // new task button click
     handleNewTaskClick() {
         this.fields = this.getFields();
-        this.selectedBook = undefined;
+        this.selectedTask = undefined;
         this.showModal = true;
     }
 
     // edit task button click
     handleEditTaskClick(event) {
         let taskId = event.currentTarget.dataset.id;
-        this.selectedBook = this.idVsTaskMap[`${taskId}`];
-        this.fields = this.getFields(this.selectedBook.Name, this.selectedBook.Task_Time__c);
+        this.selectedTask = this.idVsTaskMap[`${taskId}`];
+        this.fields = this.getFields(this.selectedTask.Name, this.selectedTask.Task_Time__c, this.selectedTask.Frequency__c);
         this.showModal = true;
     }
 
@@ -63,9 +62,12 @@ export default class TodoLwc extends LightningElement {
 
     handleSave(event) {
         let updatedFields = event.detail.updatedFields;
-        let id = this.selectedBook === undefined ? '' : this.selectedBook.Id;
-        let name = updatedFields[0].value, taskTime = updatedFields[1].value, isCompleted = false;
-        let params = { id : id, name : name, taskTime : taskTime, isCompleted : isCompleted, action : "upsert" };
+        let id = this.selectedTask === undefined ? '' : this.selectedTask.Id;
+        let name = updatedFields.inputs[0].value
+        let taskTime = updatedFields.inputs[1].value
+        let frequency = updatedFields.comboboxes[0].value
+        let isCompleted = false;
+        let params = { id : id, name : name, taskTime : taskTime, isCompleted : isCompleted, action : "upsert", frequency : frequency };
         // console.log(JSON.stringify(params));
         postTask({ requestStructure : JSON.stringify(params) })
             .then(res => {
@@ -77,10 +79,17 @@ export default class TodoLwc extends LightningElement {
             })
     }
 
-    getFields(name = "", datetime = "") {
-        return [
-            { label : "Task Name", type : "text", value : name, uniqueName: "name", required : true },
-            { label : "Task Date & Time", type : "datetime", value : datetime, uniqueName: "datetime", required : true }
-        ];
+    getFields(name = "", datetime = "", frequency = "") {
+        const frequencyOptions = [{ label : "One time", value : "One time" }, { label : "Daily", value : "Daily" }, { label : "Weekly", value : "Weekly" }, { label : "Monthly", value : "Monthly" }];
+        
+        return {
+            inputs : [
+                { label : "Task Name", type : "text", value : name, uniqueName: "name", required : true },
+                { label : "Task Date & Time", type : "datetime", value : datetime, uniqueName: "datetime", required : true }
+            ],
+            comboboxes : [
+                { label : "Frequency", options : frequencyOptions, uniqueName : "frequency", value : frequency, required : true },
+            ]
+        }
     }
 }
