@@ -17,7 +17,7 @@ export default class TodoLwc extends LightningElement {
     loadTasks() {
         getTasks()
             .then(res => {
-                this.tasks = JSON.parse(res);
+                this.tasks = res;
                 this.idVsTaskMap = {};
                 res.forEach(element => {
                     this.idVsTaskMap[`${element.id}`] = element;
