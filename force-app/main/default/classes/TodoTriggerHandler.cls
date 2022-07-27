@@ -1,12 +1,12 @@
 public with sharing class TodoTriggerHandler {
     public static Boolean stopTriggerProcessing = false;
 
-    public void execute(List<Todo__c> newTodos, List<Todo__c> oldTodos) {
+    public void execute() {
         if(!stopTriggerProcessing) {
             if(Trigger.isInsert || Trigger.isUpdate) {
-                this.handleBeforeInsertUpdate(newTodos);
+                this.handleBeforeInsertUpdate(Trigger.new);
             } else if(Trigger.isDelete) {
-                this.handleBeforeDelete(oldTodos); // old context variable used for delete trigger, 'new' can't be used
+                this.handleBeforeDelete(Trigger.old); // old context variable used for delete trigger, 'new' can't be used
             }
         }
     }
